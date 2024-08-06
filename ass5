@@ -1,0 +1,31 @@
+ASSIGNMNENT-5
+TO CREATE AND DROPPING OF VIEW
+1.	Create view that has the list of names of employees who have dependent and also display the view;
+create view emp_dep as select distinct fname from employee,dependent where ssn=essn
+ 
+2.	Create a view that has the employee name,supervisor name and employee salary for each employee who works for administration department and also display the view
+create view emp_sup as select e.fname as emp_name,s.fname as Supervisor_name,e.sal from employee e,employee s,department where e.superssn=s.ssn and department.dno=e.dno and dname='Administration'
+select * from emp_sup
+ 
+3.	Create a view that has employee name, salary and project name which are located at Bellarie, Stafford use explicit set values.
+create view emp_pro as select fname,sal,pname from employee,project,works_on where (ploc='Bellaire' or ploc='Stafford') and pnum=pno and ssn=essn
+select * from emp_pro
+ 
+4.	Create view that has department name, manager name,project name and salary for every projectand also display the view.
+create view dpt_pro as select dname,fname as mgr_name,pname,sal from employee,project,department where dnum=department.dno and mgr_ssn=ssn
+ 
+5.	Create view that has the department name,number of employees working in the department, for each department with more than one employee working in the department display the view.
+create view emp_dept as select dname,count(*) as no_of_emp from employee e,department d where e.dno=d.dno group by e.dno,dname having count(*)>1
+select * from emp_dept
+ 
+6.	Create view that has the project name,controlling department name,number of employees and total number of hours worked on the project for each projectand also display the view.
+create view pro_dep as select pname,dname,count(*) as no_of_emp,sum(hours) as total_hours from department,project,works_on where pno=pnum and dno=dnum group by pname,dname
+ 
+7.	Create view that has the project name,controlling department name,number of employees and total number of hours worked on the project for each project with more than one employee working on itand also display the view.
+create view pro_dep_c as select pname,dname,count(*) as no_of_emp,sum(hours) as total_hours from department,project,works_on where pno=pnum and dno=dnum group by pname,dname having count(*)>1
+ 
+8.	Create a view that has dnumber that has more than five employees retrieve the department number and number of its employees who are making more than Rs 40000also display the view
+create view dno_emp_sal as select dno,count(*) as emp_more_than_40000 from employee where dno in(select dno from employee group by dno having count(dno)>2) and sal>40000 group by dno
+ 
+
+
