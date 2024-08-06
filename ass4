@@ -1,0 +1,63 @@
+ASSIGNEMENT-3
+Queries (along with sub Queries) using ANY, ALL, IN, EXISTS, NOTEXISTS,UNION, EXCEPT ,INTERSECT,BETWEEN,LIKE,ORDER BY.
+1.	Retrieve the Fname and salary of all employee who is working for department 4 and make over salary 30000 or working for department 5 make over salary 25000.
+select fname from employee where (dno=4 and sal>30000) or (dno=5 and sal>25000)
+ 
+2.	Retrieve the Fname and address of all employee whose salary is in the range of 30000 to 40000.
+select fname,address from employee where (sal>=30000 and sal<=40000)  
+3.	Retrieve the Pname and plocation of all project controlled by department with number 5
+select pname,ploc from project where (dnum=5)
+ 
+4.	Retrieve the Names of dependent born in the year 1988
+select dep_name from dependent where bdate like '______1988'
+ 
+5.	Retrieve the pnumber for which employee worked for more than 30 hours
+select pno from works_on where hours>30
+ 
+6.	Retrieve the Name and birth date of dependents who have daughter or son relationship with the employees.
+select dep_name,bdate from dependent where relationship='son' or relationship='daughter'
+ 
+7.	Retrieve the name of project which are located at a place which contains a letter u
+select pname from project where ploc like '%u%'
+ 
+8.	Retrieve the names of employee who are mangers of the department
+select fname from employee,department where ssn=mgr_ssn
+ 
+9.	Retrieve the names of each employee who has dependent
+select distinct fname from employee,dependent where ssn=essn
+ 
+10.	For every department located ad Houston retrieve the Manger Lname and salary if Lname of employee contains only four characters.
+select lname from employee,department,dept_loc where dloc='Houston' and dept_loc.dnum=department.dno and mgr_ssn=ssn
+ 
+11.	Retrieve the Fname and Lname of employee who is a supervisor for a employee with first name as Ramesh
+select s.fname,s.lname from employee s where ssn in(select e.superssn from employee e where e.fname='Ramesh')
+ 
+12.	List the ssn of all employee who are manger and also works on project
+select distinct essn from department,works_on where mgr_ssn=essn
+ 
+13.	Retrieve the ssn of employee who have no dependent
+select ssn from employee where ssn not in(select essn from dependent)
+ 
+14.	List the ssn of all employee who either works on project or having the dependent
+select ssn from employee where ssn in(select essn from works_on) or ssn in(select essn from dependent)
+ 
+15.	Make a list of project numbers for projects that involve an employee whose last name is franklin either as worker or as manager of the department that controls the project.
+select distinct pno from employee,works_on where essn=ssn and fname='Franklin' union select distinct pnum from project,employee,department where dnum=department.dno and fname='Franklin' and ssn=mgr_ssn
+ 
+16.	Retrieve the Fname of employee in the increasing order of their salary and decreasing order of department number
+select fname from employee order by dno desc,sal asc
+ 
+17.	Retrieve the Dependent name in the decreasing order of their birth date 
+select dep_name from dependent order by bdate desc
+ 
+18.	Retrieve the firstname and lastname of all employee whose salary is more than the salary of employees working for department 5.
+select fname,lname from employee where sal>(select max(sal) from employee where dno=5)
+ 
+19.	Retrieve the ssn of all employee who work on any of the project controlled by department 4
+select distinct essn from project,works_on where pno=pnum and dnum=4
+ 
+20.	Retrieve the name of each employee who has a dependent with same first name and is the same gender as the employee
+select fname from employee e,dependent d where essn=ssn and fname=dep_name and e.gen=d.gen
+ 
+
+
