@@ -16,3 +16,43 @@ begin
 dep_add(dna,dn,mssn,md);
 end;
 /
+
+
+
+2.	Write a stored procedure to display the employee name and salary if name of the working department and ssn of the employee is passed.
+ 
+create or replace procedure disp_emp(dn in department.dname%type,ss in employee.ssn%type) is
+en employee.fname%type;
+sa employee.sal%type;
+begin
+select fname,sal into en,sa from employee e,department d where ssn=ss and dn=dname and e.dno=d.dno;
+dbms_output.put_line('Name    Salary');
+dbms_output.put_line(en||'    '||sa);
+end;
+/
+declare
+dn department.dname%type:=:Dname;
+ss employee.ssn%type:=:SSN;
+begin
+disp_emp(dn,ss);
+end;
+/
+ 
+
+
+3.	Write a stored procedure to  update the salary  (by 10%) of the employee who is working on the project named ProductX and hours more than 30.
+create or replace procedure emp_sal as
+begin
+update employee set sal=sal+sal*0.1 where ssn in(select ssn from employee,project,works_on where pname='ProductX' and pno=pnum and hours>30 and ssn=essn);
+end;
+/
+begin
+emp_sal();
+dbms_output.put_line('Tables updated!');
+end;
+/
+ 
+ 
+
+
+
