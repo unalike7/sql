@@ -1,0 +1,186 @@
+ASSIGNMNENT-7
+Develop PL/SQL program using FUNCTIONS. 
+1.	Write a stored function to display salary of employee if ssn of employee is passed as an argument.
+create or replace function get_sal(ss in employee.ssn%type)
+return employee.sal%type
+is
+sa employee.sal%type;
+begin
+select sal into sa from employee where ssn=ss;
+return sa;
+end;
+/
+
+
+declare
+ss employee.ssn%type:=:SSN;
+sa employee.sal%type;
+begin
+sa:=get_sal(ss);
+dbms_output.put_line('Salary is '||sa);
+end;
+/
+
+ 
+
+
+
+
+
+
+
+2.	Write a stored function to display total salary of all employees who are working on the project, accept the project number from user.
+
+create or replace function get_sal_sum(pn in works_on.pno%type)
+return number
+is
+ss number;
+begin
+select sum(sal) into ss from employee,works_on where ssn=essn and pno=pn;
+return ss;
+end;
+/
+
+declare
+pn works_on.pno%type:=:PNO;
+ss number;
+begin
+ss:=get_sal_sum(pn);
+dbms_output.put_line('Total salary is '||ss);
+end;
+/
+ 
+
+
+
+
+
+
+
+
+
+3.	Write a stored function to display total number of employees working for the project located at particular location. Accept location from user.
+
+create or replace function get_count(lo in project.ploc%type)
+return number
+as
+co number;
+begin
+select count(*) into co from employee,project,works_on where ploc=lo and pnum=pno and essn=ssn;
+return co;
+end;
+/
+
+declare
+pl project.ploc%type:=:Plocation;
+c number;
+begin
+c:=get_count(pl);
+dbms_output.put_line('Number of employees are '||c);
+end;
+/
+ 
+
+
+
+
+
+
+
+
+
+ASSIGNMNENT-8
+Develop PL/SQL programs using CURSOR.
+1.	Using implicit cursor update the salary of the employee are working on project number (1,10)  and also display the number employees salary updated. If number of rows updated more than 5 then print many employees are benefited otherwise few benifited.
+declare
+ct number;
+ss employee.ssn%type;
+begin
+update employee set sal=sal+sal*0.01 where ssn in(select distinct essn from works_on where pno=1 or pno=10);
+ct:=sql%rowcount;
+dbms_output.put_line('Total number of rows effected are : '||ct);
+if ct>5 then
+dbms_output.put_line('Many employees are benefited');
+else 
+dbms_output.put_line('Few employees benefitted');
+end if;
+end;
+ 
+
+
+
+
+
+
+2.	Define a EXPLICIT cursor to display the ssn, fname and dependent names of employees.
+declare
+cursor ck_emp is select ssn,fname,dep_name from employee,dependent where ssn=essn;
+ss employee.ssn%type;
+fn employee.fname%type;
+dn dependent.dep_name%type;
+begin
+dbms_output.put_line('Emp_ssn    Emp_name    Dep_name');
+open ck_emp;
+loop
+fetch ck_emp into ss,fn,dn;
+exit when ck_emp%notfound;
+dbms_output.put_line(ss||'  '||fn||'   '||dn);
+end loop;
+close ck_emp;
+end;
+/
+ 
+
+
+
+
+
+
+
+ASSIGNMNENT-9
+Develop PL/SQL programs using Triggers
+1.	Create trigger to display total number of employees working  for department research in organization/company before inserting new record .
+create or replace trigger emp_tri before insert on employee
+declare
+ct number;
+begin
+select count(*) into ct from employee join department on employee.dno=department.dno where dname='Research';
+dbms_output.put_line('Total number of employees in research department : '||ct);
+end;
+/
+ 
+insert into employee values('abc','p','xys',321654987,'06/09/2000','132 sd,TX','m',10000,'888665555','7');
+ 
+
+2.	Write a trigger to display the salary difference between the old and new salary before updating.
+create or replace trigger emp_tri before update on employee for each row
+declare
+dif number;
+begin
+dif:=:new.sal-:old.sal;
+dbms_output.put_line('Difference between salary is : '||dif);
+end;
+/
+ 
+
+update employee set sal=sal+sal*0.1 where ssn=321654987;
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
